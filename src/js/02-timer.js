@@ -1,46 +1,59 @@
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const refs = {
-    dateTimePickerInput: document.querySelector('#datetime-picker'),
-    startBtn: document.querySelector('button[data-start]'),
-}
+  dateTimePickerInput: document.querySelector('#datetime-picker'),
+  startBtn: document.querySelector('[data-start]'),
+  daysEl: document.querySelector('[data-days]'),
+  hoursEl: document.querySelector('[data-hours]'),
+  minutesEl: document.querySelector('[data-minutes]'),
+  secondsEl: document.querySelector('[data-seconds]'),
+};
 
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-    onClose(selectedDates) {
-        if (selectedDates[0] < new Date()) {
-            window.alert("Please choose a date in the future");
-            refs.startBtn.disabled = true;
-        } else {
-            refs.startBtn.disabled = false;
-        //     console.log(selectedDates[0]);
-        // console.log(selectedDates[0].getTime() - Date.now());
-        
-        // return Date.now() - selectedDates[0].getSeconds();
-      }
-        
-         
+  onClose(selectedDates) {
+    if (selectedDates[0] < new Date()) {
+      window.alert('Please choose a date in the future');
+      refs.startBtn.disabled = true;
+    } else {
+      refs.startBtn.disabled = false;
+      console.log(selectedDates[0]);
+
+      timer(selectedDates);
+    }
   },
 };
 
 flatpickr(refs.dateTimePickerInput, options);
 
-// console.log(options.defaultDate);
-// const timer = {
-//     start() {
-//         const timerStart = Date.now();
-//         setInterval(() => {
-//             const currentTime = Date.now();
-//             console.log(timerStart - currentTime);
-//         },1000)
-//     }
-// }
+function timer(selectedDates) {
+  const timerId = setInterval(() => {
+    const diffInMs = selectedDates[0].getTime() - new Date().getTime();
+    const formatedDiffInMs = convertMs(diffInMs);
+    
+    if (diffInMs > 0) {
+      insertValueInTimer(formatedDiffInMs);
+    } else {
+      clearInterval(timerId);
+}
 
-// timer.start();
+  }, 1000);
+}
+
+function addLeadingZero(value) {
+  return value.toString().padStart(2, '0');
+}
+
+function insertValueInTimer(formatedDiffInMs) {
+  refs.secondsEl.textContent = addLeadingZero(formatedDiffInMs.seconds);
+  refs.minutesEl.textContent = addLeadingZero(formatedDiffInMs.minutes);
+  refs.hoursEl.textContent = addLeadingZero(formatedDiffInMs.hours);
+  refs.daysEl.textContent = addLeadingZero(formatedDiffInMs.days);
+}
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -60,5 +73,3 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-
-
