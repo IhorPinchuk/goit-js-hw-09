@@ -1,5 +1,6 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const refs = {
   dateTimePickerInput: document.querySelector('#datetime-picker'),
@@ -8,7 +9,10 @@ const refs = {
   hoursEl: document.querySelector('[data-hours]'),
   minutesEl: document.querySelector('[data-minutes]'),
   secondsEl: document.querySelector('[data-seconds]'),
+  timerEl: document.querySelector('.timer'),
 };
+
+let arrayTime = [];
 
 const options = {
   enableTime: true,
@@ -17,30 +21,38 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     if (selectedDates[0] < new Date()) {
-      window.alert('Please choose a date in the future');
+      Notify.failure('Please choose a date in the future');
       refs.startBtn.disabled = true;
     } else {
+      Notify.info('You can press "Start"');
       refs.startBtn.disabled = false;
       console.log(selectedDates[0]);
-
-      timer(selectedDates);
+      arrayTime.splice(0, 1, selectedDates[0]);
     }
   },
 };
+refs.startBtn.disabled = true;
+refs.startBtn.addEventListener('click', handleTimerStart);
 
 flatpickr(refs.dateTimePickerInput, options);
 
-function timer(selectedDates) {
+function handleTimerStart() {
+  Notify.success('Start');
   const timerId = setInterval(() => {
-    const diffInMs = selectedDates[0].getTime() - new Date().getTime();
+    const diffInMs = arrayTime[0].getTime() - new Date().getTime();
     const formatedDiffInMs = convertMs(diffInMs);
-    
-    if (diffInMs > 0) {
-      insertValueInTimer(formatedDiffInMs);
-    } else {
-      clearInterval(timerId);
-}
 
+    if (diffInMs > 0) {
+      refs.startBtn.disabled = true;
+      insertValueInTimer(formatedDiffInMs);
+      if (diffInMs <= 10000) {
+        refs.timerEl.style.color = 'red';
+      }
+    } else {
+      refs.timerEl.style.color = 'black';
+      Notify.success('Countdown is over');
+      clearInterval(timerId);
+    }
   }, 1000);
 }
 
