@@ -10,6 +10,9 @@ const refs = {
   minutesEl: document.querySelector('[data-minutes]'),
   secondsEl: document.querySelector('[data-seconds]'),
   timerEl: document.querySelector('.timer'),
+  fieldEl: document.querySelectorAll('.field'),
+  valueEl: document.querySelectorAll('.value'),
+  labelEl: document.querySelectorAll('.label'),
 };
 
 let arrayTime = [];
@@ -21,9 +24,11 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     if (selectedDates[0] < new Date()) {
+      refs.startBtn.style.backgroundColor = 'red';
       Notify.failure('Please choose a date in the future');
       refs.startBtn.disabled = true;
     } else {
+      refs.startBtn.style.backgroundColor = 'green';
       Notify.info('You can press "Start"');
       refs.startBtn.disabled = false;
       console.log(selectedDates[0]);
@@ -50,6 +55,7 @@ function handleTimerStart() {
       }
     } else {
       refs.timerEl.style.color = 'black';
+      refs.startBtn.style.backgroundColor = 'silver';
       Notify.success('Countdown is over');
       clearInterval(timerId);
     }
@@ -85,3 +91,42 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
+
+refs.dateTimePickerInput.style.display = 'block';
+refs.dateTimePickerInput.style.marginRight = 'auto';
+refs.dateTimePickerInput.style.marginLeft = 'auto';
+refs.dateTimePickerInput.style.marginBottom = '10px';
+refs.dateTimePickerInput.style.boxSizing = 'border-box';
+refs.dateTimePickerInput.style.fontSize = '20px';
+refs.dateTimePickerInput.style.fontWeight = '700';
+refs.dateTimePickerInput.style.textAlign = 'center';
+
+refs.startBtn.style.display = 'block';
+refs.startBtn.style.marginRight = 'auto';
+refs.startBtn.style.marginLeft = 'auto';
+refs.startBtn.style.fontSize = '20px';
+refs.startBtn.style.fontWeight = '700';
+refs.startBtn.style.backgroundColor = 'silver';
+refs.startBtn.style.color = 'black';
+
+refs.timerEl.style.display = 'flex';
+refs.timerEl.style.justifyContent = 'center';
+
+refs.fieldEl.forEach(el => {
+  el.style.display = 'flex';
+  el.style.flexDirection = 'column';
+  el.style.alignItems = 'center';
+  el.style.marginTop = '10px';
+  el.style.marginRight = '10px';
+});
+
+refs.valueEl.forEach(el => {
+  el.style.fontSize = '50px';
+  el.style.fontWeight = '500';
+});
+
+refs.labelEl.forEach(el => {
+  el.style.fontSize = '20px';
+  el.style.fontWeight = '500';
+  el.style.textTransform = 'uppercase';
+});
